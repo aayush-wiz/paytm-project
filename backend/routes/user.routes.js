@@ -58,11 +58,13 @@ router.post("/signup", async (req, res) => {
   });
 });
 
-router.get("/signin", async (req, res) => {
+router.post("/signin", async (req, res) => {
   const { username, password } = req.body;
   const { success } = validateSignInUser.safeParse(req.body);
   if (!success) {
-    return res.status(411).json({ message: "Invalid Input" });
+    return res.status(411).json({
+      message: "Invalid Input",
+    });
   }
 
   const dbUser = await User.findOne({
