@@ -6,6 +6,7 @@ import InputBox from "../components/InputBox";
 import SubHeading from "../components/SubHeading";
 import axios from "axios";
 import { useState } from "react";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const SignIn = () => {
   const [username, setUsername] = useState("");
@@ -35,13 +36,10 @@ const SignIn = () => {
             <div className="py-4">
               <Button
                 onclick={async () => {
-                  const response = await axios.post(
-                    "http://localhost:8001/api/v1/user/signin",
-                    {
-                      username: username,
-                      password: password,
-                    }
-                  );
+                  const response = await axios.post(`${API_URL}/user/signin`, {
+                    username: username,
+                    password: password,
+                  });
                   localStorage.setItem("token", response.data.token);
                   navigate("/dashboard");
                 }}

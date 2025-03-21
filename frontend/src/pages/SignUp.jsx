@@ -7,6 +7,8 @@ import SubHeading from "../components/SubHeading";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const SignUp = () => {
   const navigate = useNavigate();
   const [firstName, setFirstName] = useState("");
@@ -52,15 +54,12 @@ const SignUp = () => {
             <div className="py-4">
               <Button
                 onclick={async () => {
-                  const response = await axios.post(
-                    "http://localhost:8001/api/v1/user/signup",
-                    {
-                      username,
-                      firstName,
-                      lastName,
-                      password,
-                    }
-                  );
+                  const response = await axios.post(`${API_URL}/user/signup`, {
+                    username,
+                    firstName,
+                    lastName,
+                    password,
+                  });
                   localStorage.setItem("token", response.data.token);
                   navigate("/dashboard");
                 }}

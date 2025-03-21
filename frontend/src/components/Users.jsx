@@ -2,17 +2,16 @@ import { useEffect, useState } from "react";
 import Button from "./Button";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const Users = () => {
   const [users, setUsers] = useState([]);
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:8001/api/v1/user/bulk?filter=${filter}`)
-      .then((response) => {
-        setUsers(response.data.user);
-      });
+    axios.get(`${API_URL}/user/bulk?filter=${filter}`).then((response) => {
+      setUsers(response.data.user);
+    });
   }, [filter]);
 
   return (
@@ -44,7 +43,7 @@ function User({ user }) {
       <div className="flex">
         <div className="rounded-full h-12 w-12 bg-slate-200 flex justify-center mt-1 mr-2">
           <div className="flex flex-col justify-center h-full text-xl">
-            {user.firstName[0]}
+            {user.firstName[0].toUpperCase()}
           </div>
         </div>
         <div className="flex flex-col justify-center h-full">

@@ -126,4 +126,15 @@ router.put("/", authmiddleware, async (req, res) => {
   });
 });
 
+router.get("/info", authmiddleware, async (req, res) => {
+  const user = await User.findOne({
+    _id: req.userId,
+  });
+
+  res.status(200).json({
+    firstName: user.firstName,
+    lastName: user.lastName,
+  });
+});
+
 module.exports = router;
