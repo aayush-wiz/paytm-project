@@ -134,6 +134,7 @@ router.get("/info", authmiddleware, async (req, res) => {
   res.status(200).json({
     firstName: user.firstName,
     lastName: user.lastName,
+    password: user.password,
   });
 });
 
