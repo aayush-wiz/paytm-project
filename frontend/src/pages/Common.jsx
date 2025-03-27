@@ -7,10 +7,12 @@ function Common() {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   useEffect(() => {
-    if (token) {
-      navigate("/dashboard");
+    if (!token) {
+      navigate("/");
       return;
     }
+    navigate("/dashboard");
+    return;
   });
   return (
     <>

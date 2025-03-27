@@ -1,9 +1,6 @@
 import { Link } from "react-router-dom";
-import InputBox from "./InputBox";
-import Button from "./Button";
 
 function Hero() {
-
   return (
     <div className="flex flex-col justify-center items-center h-screen">
       <div className="mb-3 flex font-bold text-2xl bg-lime-200">

@@ -49,7 +49,10 @@ router.post("/signup", async (req, res) => {
     {
       userId,
     },
-    process.env.JWT_SECRET
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "2 days",
+    }
   );
 
   res.json({
@@ -76,7 +79,9 @@ router.post("/signin", async (req, res) => {
     return req.status(411).json({ message: "Error while logging In" });
   }
 
-  const token = jwt.sign({ userId: dbUser._id }, process.env.JWT_SECRET);
+  const token = jwt.sign({ userId: dbUser._id }, process.env.JWT_SECRET, {
+    expiresIn: "10h",
+  });
 
   res.status(200).json({
     token: token,

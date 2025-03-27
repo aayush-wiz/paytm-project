@@ -1,11 +1,21 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import InputBox from "../components/InputBox";
+import ProfileInput from "../components/ProfileInput";
+import ProfileChangeButton from "../components/ProfileChangeButton";
+import ProfileSubmitButton from "../components/ProfileSubmitButton";
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 const Profile = () => {
-  const [isCurrentPassword, setIsCurrentPassword] = useState(false);
+  // State
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [changeCred, setChangeCred] = useState(false);
+  const [newCred, setNewCred] = useState({
+    firstName: "",
+    lastName: "",
+    password: "",
+  });
   const [userIcon, setUserIcon] = useState("U");
   const [change, setChange] = useState(false);
   const [credentials, setCredentials] = useState({
@@ -14,6 +24,51 @@ const Profile = () => {
     password: "...",
   });
 
+  //Functions
+  const handleUpdate = () => {
+    if (currentPassword === credentials.password) {
+      setChange(false);
+      setChangeCred(true);
+    }
+  };
+
+  const updateCred = async () => {
+    const validatedBody = {};
+    if (
+      newCred.firstName.length >= 3 &&
+      newCred.firstName !== credentials.firstname
+    ) {
+      validatedBody.firstName = newCred.firstName;
+    }
+    if (
+      newCred.lastName.length >= 3 &&
+      newCred.lastName !== credentials.lastname
+    ) {
+      validatedBody.lastName = newCred.lastName;
+    }
+    if (
+      newCred.password.length >= 6 &&
+      newCred.password !== credentials.password
+    ) {
+      validatedBody.password = newCred.password;
+    }
+
+    // Only proceed if there's at least one field to update
+    if (Object.keys(validatedBody).length === 0) {
+      console.log("No changes detected.");
+      return;
+    }
+
+    setChangeCred((prev) => !prev);
+    const res = await axios.put(`${API_URL}/user/`, validatedBody, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(res.data);
+  };
+
+  //Routing
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   useEffect(() => {
@@ -38,10 +93,7 @@ const Profile = () => {
         });
         setUserIcon(firstname);
       });
-  });
-
-  // TODO: Complete Profile Page
-  if (isCurrentPassword) console.log("Complete profile page");
+  }, [token, navigate]);
 
   return (
     <div className="bg-gray-400 h-screen flex justify-center">
@@ -49,45 +101,29 @@ const Profile = () => {
         <div className="bg-white w-80 h-max text-center p-4 px-4 rounded-lg flex flex-col items-center justify-center">
           <div className="rounded-full h-12 w-12 bg-slate-200 flex flex-col justify-center relative mt-1 mr-2 cursor-pointer">
             <div className="flex flex-col justify-center h-full text-xl ">
-              {userIcon[0].toUpperCase()}
+              {userIcon ? userIcon[0].toUpperCase() : "U"}
             </div>
           </div>
           <div className="border p-2 px-4 mt-4 text-2xl w-full">
-            <div className="shadow-md mb-1">
-              {credentials.firstname[0].toUpperCase() +
-                credentials.firstname.slice(1)}
-            </div>
-            <div className="shadow-md mt-1">
-              {credentials.lastname[0].toUpperCase() +
-                credentials.lastname.slice(1)}
-            </div>
-            <button
-              onClick={() => {
-                setChange((prev) => !prev);
-              }}
-              className="border mt-3 cursor-pointer w-full bg-gray-800 text-white py-2 rounded-md"
-            >
-              Change Credentials
-            </button>
-            {change && (
-              <div className="text-lg mt-2">
-                Current Password
-                <input
-                  onChange={(e) => {
-                    const pass = e.target.value;
-                    if (pass === credentials.password) {
-                      setIsCurrentPassword(true);
-                    }
-                  }}
-                  type="password"
-                  className="border pl-1 w-full rounded-md border-gray-300"
-                  placeholder="......"
-                />
-                <button className="border mt-3 cursor-pointer w-full bg-gray-800 text-white py-2 rounded-md">
-                  Submit Password
-                </button>
-              </div>
-            )}
+            {/* First Name */}
+            {/* Last Name */}
+            {/* Password */}
+            <ProfileInput
+              changeCred={changeCred}
+              credentials={credentials}
+              setNewCred={setNewCred}
+            />
+
+            <ProfileSubmitButton
+              changeCred={changeCred}
+              updateCred={updateCred}
+              setChange={setChange}
+            />
+            <ProfileChangeButton
+              change={change}
+              setCurrentPassword={setCurrentPassword}
+              handleUpdate={handleUpdate}
+            />
           </div>
         </div>
       </div>
