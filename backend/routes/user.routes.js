@@ -140,6 +140,7 @@ router.get("/info", authmiddleware, async (req, res) => {
     firstName: user.firstName,
     lastName: user.lastName,
     password: user.password,
+    profileId: user._id,
   });
 });
 

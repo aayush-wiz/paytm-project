@@ -4,15 +4,20 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 const API_URL = import.meta.env.VITE_API_URL;
 
-export const Users = () => {
+export const Users = ({ userId }) => {
   const [users, setUsers] = useState([]);
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
-    axios.get(`${API_URL}/user/bulk?filter=${filter}`).then((response) => {
-      setUsers(response.data.user);
-    });
-  }, [filter]);
+    if (!userId) return;
+
+    axios
+      .get(`${API_URL}/user/bulk?filter=${filter}`)
+      .then((response) => {
+        setUsers(response.data.user);
+      })
+      .catch((error) => console.error("Error fetching users:", error));
+  }, [filter, userId]);
 
   return (
     <>
@@ -28,9 +33,11 @@ export const Users = () => {
         ></input>
       </div>
       <div>
-        {users.map((user) => (
-          <User user={user} />
-        ))}
+        {users
+          .filter((user) => user._id !== userId)
+          .map((user) => (
+            <User key={user._id} user={user} />
+          ))}
       </div>
     </>
   );
@@ -48,7 +55,8 @@ function User({ user }) {
         </div>
         <div className="flex flex-col justify-center h-full">
           <div>
-            {user.firstName} {user.lastName}
+            {user.firstName[0].toUpperCase() + user.firstName.slice(1)}{" "}
+            {user.lastName[0].toUpperCase() + user.lastName.slice(1)}
           </div>
         </div>
       </div>

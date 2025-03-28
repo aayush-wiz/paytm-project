@@ -3,36 +3,38 @@ import AppBar from "../components/AppBar";
 import { Balance } from "../components/Balance";
 import { Users } from "../components/Users";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const Dashboard = () => {
-  const navigate = useNavigate();
-  const [balance, setBalance] = useState(0);
   const token = localStorage.getItem("token");
+  const [user, setUser] = useState("User");
+  const [id, setId] = useState("");
   useEffect(() => {
-    if (!token) {
-      navigate("/");
-      return;
-    }
+    if (!token) return;
     axios
-      .get(`${API_URL}/account/balance`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      .get(`${API_URL}/user/info`, {
+        headers: { Authorization: `Bearer ${token}` },
       })
-      .then((res) => {
-        const amount = res.data.balance.toFixed(2);
-        setBalance(amount);
-      });
-  }, [token, navigate]);
+      .then((response) => {
+        setId(response.data.profileId);
+        setUser(
+          response.data.firstName[0].toUpperCase() +
+            response.data.firstName.slice(1) +
+            " " +
+            response.data.lastName[0].toUpperCase() +
+            response.data.lastName.slice(1)
+        );
+      })
+      .catch((error) => console.error("Error fetching user info:", error));
+  }, [token]);
   return (
     <>
       <div>
         <AppBar />
         <div>
-          <Balance value={balance} />
-          <Users />
+          <div className="font-bold text-lg">{user}</div>
+          <Balance />
+          <Users userId={id} />
         </div>
       </div>
     </>
